@@ -1,0 +1,12 @@
+const path = require('path');
+module.exports = {
+    db:{
+        datebase:process.env.DATEBASE || 'movie',
+        username:'root',
+        password:'qiaokeli',
+        options:{
+            host:'localhost',
+            dialect:'mysql'
+        }
+    }
+}
