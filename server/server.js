@@ -12,7 +12,7 @@ app.post('/user',(req,res)=>{
     })
 })
 sequelize
-  .authenticate()
+  .sync({force:true})
   .then(() => {
     console.log('Connection has been established successfully.');
     app.listen(3000,()=>{console.log('服务器已经开启');})

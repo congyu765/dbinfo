@@ -6,7 +6,11 @@ module.exports = {
         password:'qiaokeli',
         options:{
             host:'localhost',
-            dialect:'mysql'
+            dialect:'mysql',
+            define:{
+                underscored:true,
+                paranoid:true,
+            }
         }
     }
 }
