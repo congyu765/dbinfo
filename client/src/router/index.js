@@ -1,14 +1,16 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+import store from '../store'
+import { Notification } from 'element-ui'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    redirect: {
+      name: 'movie-list'
+    }
   },
   {
     path: '/about',
@@ -20,18 +22,69 @@ const routes = [
   },
   {
     path: '/user/register',
-    name: 'rigister',
+    name: 'register',
+    alias: '/register',
     component: () => import('../views/user/register.vue')
   },
   {
     path: '/user/login',
     name: 'login',
+    alias: '/login',
     component: () => import('../views/user/login.vue')
+  },
+  {
+    path: '/movie',
+    component: () => import('../views/layout/Movie.vue'),
+    children: [
+      {
+        path: 'create',
+        name: 'movie-create',
+        component: () => import('../views/movie/Create.vue'),
+        meta: {
+          auth: true
+        }
+      },
+      {
+        path: 'list',
+        name: 'movie-list',
+        component: () => import('../views/movie/List.vue')
+      },
+      {
+        path: 'detail/:id',
+        name: 'movie-detail',
+        component: () => import('../views/movie/Detail.vue')
+      }
+    ]
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'movie-list'
+    }
   }
 ]
 
 const router = new VueRouter({
   routes
 })
-
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((router) => router.meta.auth)) {
+    if (store.state.isUserLogin) {
+      next()
+    } else {
+      Notification({
+        title: '提示',
+        type: 'warning',
+        message: '请登录后再访问该页面'
+      })
+      next({
+        name: 'login',
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    }
+  }
+  next()
+})
 export default router

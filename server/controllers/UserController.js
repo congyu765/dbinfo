@@ -10,17 +10,28 @@ function tokenSign({id,email}){
 }
 module.exports = {
     async register(req,res){
+        console.log(req.body);
         try {
             const user = await User.create(req.body);
             res.status(201).send({
-                user,
+                code:200,
+                user:{
+                    email: user.email,
+                    id: user.id
+                },
                 token:tokenSign(user)
             });
         } catch (error) {
-            // console.log(error);
+            console.log(error);
+            let err = []
+            if(error.errors){
+                error.errors.forEach(validataError => {
+                    err.push(validataError.message);
+                });
+            }
             res.status(400).send({
                 code:400,
-                error:'该邮箱已经注册'
+                error:err.join('</br>')
             });
         }
     },
@@ -94,7 +105,11 @@ module.exports = {
            let isVaildPassword = user.comparePassword(req.body.password)
            if(isVaildPassword){
                res.send({
-                   user:user.toJSON(),
+                   code:200,
+                   user:{
+                      email: user.email,
+                      id: user.id
+                   },
                    token:tokenSign(user)
                })
            }else{

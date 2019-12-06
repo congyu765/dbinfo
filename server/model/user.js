@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const MD5 = require('crypto-js/md5');
 function hassPassword(user,options){
     if(user.changed('password')){
-        user.password = MD5(user.password).toString();
+      user.password = MD5(user.password).toString();
     }
 }
 module.exports = (sequelize, DataTypes) => {
@@ -16,17 +16,24 @@ module.exports = (sequelize, DataTypes) => {
             // 属性
             email: {
                 type: DataTypes.STRING,
-                unique:true,
-                allowNull:false,
+                unique:{
+                    msg: '该邮箱已被注册,请更换'
+                },
                 validate:{
-                    isEmail:true
+                    isEmail: {
+                        msg: '请提供正确的邮箱地址'
+                    }
                 }
             },
             password: {
                 type: DataTypes.STRING,
                 allowNull:false,
                 validate:{
-                    len:[8,40]
+                    len:{
+                        min: 5,
+                        max: 20,
+                        msg: '密码长度必须大于5小于20'
+                    }
                 }
             }
         }, 
